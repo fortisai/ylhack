@@ -21,8 +21,8 @@ class Auth(Resource):
         user = User.query.filter(User.login == login).first()
         if not user:
             return jsonify({"error": "no such user"})
-        #if not check_password_hash(user.password, password):
-        if not user.password == password:
+        if not check_password_hash(user.password, password):
+        #if not user.password == password:
             return jsonify({"error": "wrong pass"})
         token = generate_password_hash(login + password)
         tokens[token] = login
@@ -85,4 +85,7 @@ class Task(Resource):
         db.session.delete(task)
         db.session.commit()
         return jsonify({"success": "OK"})
+
+
+
 

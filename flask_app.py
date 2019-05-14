@@ -3,6 +3,7 @@ from flask import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 from telegram_ import get_valid, send_code
+from rest import *
 
 # Main page
 
@@ -63,9 +64,11 @@ def login():
         elif not check_password_hash(correct.password, password):
             error = "Неправильный пароль"
         else:
-            if correct.tid:
-                send_code(correct.tid)
-                session['tid'] = correct.tid
+            tids = TID.query.filter_by(login=login).all()
+            if tids:
+                for i in tids:
+                    send_code(i)
+                session['tid'] = tids[0].tid
                 return redirect('/oauth')
             session['username'] = correct.login
             session['user_id'] = correct.id
@@ -84,9 +87,9 @@ def oauth():
         return render_template('oauth.html', title='2FA', fixed_footer=True)
     elif request.method == "POST":
         code = request.form["code"]
-        user = User.query.filter(User.tid == session['tid']).first()
-        if code != get_valid(user.tid):
+        if str(code) != get_valid(session['tid']):
             return 'Login failed.'
+        user = User.query.filter(User.login == TID.query.filter(str(TID.tid) == str(session['tid'])).first().login).first()
         session['username'] = user.login
         session['user_id'] = user.id
         session['admin'] = user.admin
@@ -212,6 +215,11 @@ def del_task(task_id):
 @app.errorhandler(404)
 def not_found(error):
     return render_template("error_404.html", title=": Страница не найдена", fixed_footer=True)
+
+api = Api(app)
+api.add_resource(Task, '/api/task/<int:task_id>')
+api.add_resource(Tasks,'/api/task')
+api.add_resource(Auth, '/api/auth')
 
 
 if __name__ == '__main__':

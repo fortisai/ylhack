@@ -15,18 +15,16 @@ codes = {}
 def authentication(bot, update, args, chat_data):
     if len(args) == 2:
         login, passw = args
+        print(login, passw)
         response = post('http://localhost:5000/api/auth',
                  data={"login": login, "password": passw}).json()
         print(response)
-        update.message.reply_text(
-            response["error"] if not "token" in response else "Успешно"
-            )
         if response["token"]:
-            user = User.query.filter_by(login=login).first()
-            print(user, update.message.chat_id)
-            user.telegram_id = update.message.chat_id
+            new_id = TID(login=login, tid=update.message.chat_id)
+            db.session.add(new_id)
             db.session.commit()
             chat_data["token"] = response["token"]
+            update.message.reply_text('Успешно')
         return
     update.message.reply_text(
         "Неверный формат ввода"
@@ -35,15 +33,16 @@ def authentication(bot, update, args, chat_data):
 
 def send_code(tid):
     bot_token = TOKEN
-    bot_chatID = tid
-    codes[tid] = randint(10000, 99999)
-    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + str(codes[tid])
+    bot_chatID = tid.tid
+    codes[tid.tid] = randint(10000, 99999)
+    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + str(codes[tid.tid])
     response = requests.get(send_text)
     return response.json()
 
 
 def get_valid(tid):
-    return codes[tid]
+    print(codes)
+    return str(codes[tid])
 
 
 if __name__ == "__main__":

@@ -1,13 +1,15 @@
 from logging import basicConfig, DEBUG
-
+import requests
 from requests import post, get
 from telegram.ext import MessageHandler, Filters, CommandHandler, ConversationHandler, Updater
 from database import *
+from random import randint
 
 TIME = 30
-basicConfig(level=DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-TOKEN = "829719381:AAH7KMl8OeBvMq5ZLOWebK99lHAi4PrS-O4"
+# basicConfig(level=DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+TOKEN = "886061585:AAGqa4VAePyMctx6NA9uPr7JJaWA7Z3b1Oc"
 
+codes = {}
 
 
 def authentication(bot, update, args, chat_data):
@@ -30,14 +32,29 @@ def authentication(bot, update, args, chat_data):
         "Неверный формат ввода"
     )
 
-updater = Updater(TOKEN)
-dp = updater.dispatcher
-j = updater.job_queue
-auth = CommandHandler(
-    'auth', authentication, pass_args=1, pass_chat_data=1
-)
-task = CommandHandler('task', get_task, pass_args=1, pass_chat_data=1)
 
-dp.add_handler(auth)
-updater.start_polling()
-updater.idle()
+def send_code(tid):
+    bot_token = TOKEN
+    bot_chatID = tid
+    codes[tid] = randint(10000, 99999)
+    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + str(codes[tid])
+    response = requests.get(send_text)
+    return response.json()
+
+
+def get_valid(tid):
+    return codes[tid]
+
+
+if __name__ == "__main__":
+    updater = Updater(TOKEN)
+    dp = updater.dispatcher
+    j = updater.job_queue
+    auth = CommandHandler(
+        'auth', authentication, pass_args=1, pass_chat_data=1
+    )
+    # task = CommandHandler('task', get_task, pass_args=1, pass_chat_data=1)
+
+    dp.add_handler(auth)
+    updater.start_polling()
+    updater.idle()

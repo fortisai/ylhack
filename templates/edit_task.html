@@ -24,6 +24,16 @@
                     <label for="form7" class="">Описание</label>
                 </div>
 
+                <select name="solver">
+                    {% for user in users %}
+                        {% if user.id == problem.solver_id %}
+                            <option value="{{ user.id }}" selected>{{ user.login }}</option>
+                        {% else %}
+                            <option value="{{ user.id }}">{{ user.login }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+
 
                 <label for="defaultFormCardNameEx" class="grey-text font-weight-light">Выполненность</label>
                 <input type="text" id="defaultFormCardNameEx" class="form-control" name="completion_stage" value="{{ problem.completion_stage }}">

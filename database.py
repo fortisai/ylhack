@@ -18,6 +18,7 @@ class User(db.Model):
     password = db.Column(db.String(50), unique=False, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=True)
     admin = db.Column(db.Boolean, unique=False, nullable=False)
+    tid = db.Column(db.String(50), unique=True, nullable=True)
 
 
 # Данная таблица описывает задачу

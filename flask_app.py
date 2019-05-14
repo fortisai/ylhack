@@ -2,6 +2,7 @@ from database import *
 from flask import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
+from telegram_ import get_valid, send_code
 
 # Main page
 
@@ -14,6 +15,14 @@ def main():
     return render_template('main.html', problems=Problem.query.filter(Problem.author_id == session['user_id'], ).all())
 
 
+@app.route('/delegated')
+def delegated():
+    if 'user_id' not in session:
+        return redirect('/not_logged')
+    problems = Problem.query.filter(Problem.solver_id == session['user_id']).all()
+    return render_template('delegated.html', problems=problems)
+
+
 # User logout
 
 
@@ -23,6 +32,7 @@ def logout():
     session.pop('user_id', 0)
     session.pop('admin', 0)
     return redirect('/')
+
 
 @app.route('/not_logged')
 def unlog():
@@ -53,11 +63,34 @@ def login():
         elif not check_password_hash(correct.password, password):
             error = "Неправильный пароль"
         else:
+            if correct.tid:
+                send_code(correct.tid)
+                session['tid'] = correct.tid
+                return redirect('/oauth')
             session['username'] = correct.login
             session['user_id'] = correct.id
             session['admin'] = correct.admin
             return redirect('/')
         return render_template('login.html', title=': Вход', fixed_footer=True, error=error)
+
+
+@app.route('/oauth', methods=['GET', 'POST'])
+def oauth():
+    if 'user_id' in session:
+        return redirect('/')
+    if 'tid' not in session:
+        return '2FA Spoofing attempt detected.'
+    if request.method == "GET":
+        return render_template('oauth.html', title='2FA', fixed_footer=True)
+    elif request.method == "POST":
+        code = request.form["code"]
+        user = User.query.filter(User.tid == session['tid']).first()
+        if code != get_valid(user.tid):
+            return 'Login failed.'
+        session['username'] = user.login
+        session['user_id'] = user.id
+        session['admin'] = user.admin
+        return redirect('/')
 
 # User registration
 
@@ -95,16 +128,21 @@ def add_task():
     if 'user_id' not in session:
         return redirect('/')
     if request.method == "GET":
-        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"), author_id=session['user_id'], completion_stage=0)
+        users = User.query.all()
+        print(len(users))
+        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"),
+                          author_id=session['user_id'], completion_stage=0)
         session['problem_id'] = problem.id
-        return render_template('edit_task.html', title='Добавление задачи', problem=problem)
+        return render_template('edit_task.html', title='Добавление задачи', problem=problem, users=users)
     elif request.method == "POST":
         name = request.form["name"]
         end_time = request.form["time_end"]
         description = request.form["description"]
         completion = request.form["completion_stage"]
-        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'], completion_stage=completion)
-        User.query.filter(User.id == session['problem_id']).delete()
+        solver = request.form["solver"]
+        print(solver)
+        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'], completion_stage=completion, solver_id=solver)
+        Problem.query.filter(Problem.id == session['problem_id']).delete()
         db.session.add(user)
         session['problem_id'] = user.id
         db.session.commit()
@@ -119,17 +157,24 @@ def edit_task(task_id):
         problem = Problem.query.filter(Problem.id == task_id).first()
         if problem is None:
             return 'Not found :('
-        if str(problem.id) != str(session['user_id']):
+        if str(problem.author_id) != str(session['user_id']):
             return 'Forbidden!!'
+        if problem.deleted:
+            return 'Scheduled delete.'
+        users = User.query.all()
+        print(len(users))
         session['problem_id'] = problem.id
-        return render_template('edit_task.html', title='Редактирование задачи', problem=problem)
+        return render_template('edit_task.html', title='Редактирование задачи', problem=problem, users=users)
     elif request.method == "POST":
         name = request.form["name"]
         end_time = request.form["time_end"]
         description = request.form["description"]
         completion = request.form["completion_stage"]
-        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'], completion_stage=completion)
-        User.query.filter(User.id == session['problem_id']).delete()
+        solver = request.form.get('solver', session['user_id'])
+        print(solver)
+        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'],
+                       completion_stage=completion, solver_id=solver)
+        Problem.query.filter(Problem.id == session['problem_id']).delete()
         db.session.add(user)
         session['problem_id'] = user.id
         db.session.commit()
@@ -143,8 +188,10 @@ def full(task_id):
     problem = Problem.query.filter(Problem.id == task_id).first()
     if problem is None:
         return 'Not found :('
-    if str(problem.id) != str(session['user_id']):
+    if str(problem.author_id) != str(session['user_id']):
         return 'Forbidden!!'
+    if problem.deleted:
+        return 'Scheduled delete.'
     return render_template('full_info.html', title='Информация о задаче', problem=problem)
 
 

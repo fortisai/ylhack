@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <div class="container pt-5">
+            <div class="col-1-3 mt-5">
+                    <hr>
+                      <center>
+                        <div class="card">
+                          <div class="card-body">
+                            <p class="card-text"><a href="/add-task">Добавить задачу</a></p>
+                            <h5 class="card-title">Делегированные {{ session["user"] }}</h5>
+                          </div>
+                        </div>
+                      </center>
+                    <hr>
+                    <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Название</th>
+                                <th scope="col">Дата выполнения</th>
+                                <th scope="col">Исполнитель</th>
+                                <th scope="col">Текуший этап</th>
+                                <th scope="col">Признак выполнености</th>
+                                <th scope="col">Приоритет</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for problem in problems %}
+                                    {% if not problem.deleted %}
+                                    <tr>
+                                        <th scope="row">{{ problem.id }}</th>
+                                        <td>{{ problem.name }}</td>
+                                        <td>{{ problem.time_end }}</td>
+                                        <td>{{ problem.author_id }}</td>
+                                        <td>{{ problem.completion_stage }}</td>
+                                        <td>{{ problem.status }}</td>
+                                        <td>{{ problem.priority }}</td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                          </table>
+
+            </div>
+    </div>
+</main>
+{% endblock %}

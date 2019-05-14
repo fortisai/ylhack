@@ -32,6 +32,7 @@ class Problem(db.Model):
     priority = db.Column(db.Integer, unique=False, nullable=True)
     completion_stage = db.Column(db.Integer, unique=False, nullable=True)
     category = db.Column(db.String(100), unique=False, nullable=True)
+    deleted = db.Column(db.Boolean, unique=False, nullable=True)
 
 
 db.create_all()

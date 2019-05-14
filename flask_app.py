@@ -9,7 +9,10 @@ import datetime
 @app.route('/')
 @app.route('/index')
 def main():
-    return render_template('base.html', fixed_footer=True)
+    if 'user_id' not in session:
+        return redirect('/not_logged')
+    return render_template('main.html', problems=Problem.query.filter(Problem.author_id == session['user_id'], ).all())
+
 
 # User logout
 
@@ -20,6 +23,11 @@ def logout():
     session.pop('user_id', 0)
     session.pop('admin', 0)
     return redirect('/')
+
+@app.route('/not_logged')
+def unlog():
+    return render_template('unlogged.html')
+
 
 # User login
 
@@ -111,8 +119,10 @@ def edit_task(task_id):
         problem = Problem.query.filter(Problem.id == task_id).first()
         if problem is None:
             return 'Not found :('
+        if str(problem.id) != str(session['user_id']):
+            return 'Forbidden!!'
         session['problem_id'] = problem.id
-        return render_template('edit_task.html', title='Добавление задачи', problem=problem)
+        return render_template('edit_task.html', title='Редактирование задачи', problem=problem)
     elif request.method == "POST":
         name = request.form["name"]
         end_time = request.form["time_end"]
@@ -124,6 +134,32 @@ def edit_task(task_id):
         session['problem_id'] = user.id
         db.session.commit()
         return render_template('edit_task.html', problem=user)
+
+
+@app.route('/full/<int:task_id>', methods=['GET', 'POST'])
+def full(task_id):
+    if 'user_id' not in session:
+        return abort(404)
+    problem = Problem.query.filter(Problem.id == task_id).first()
+    if problem is None:
+        return 'Not found :('
+    if str(problem.id) != str(session['user_id']):
+        return 'Forbidden!!'
+    return render_template('full_info.html', title='Информация о задаче', problem=problem)
+
+
+@app.route('/del-task/<int:task_id>', methods=['GET', 'POST'])
+def del_task(task_id):
+    if 'user_id' not in session:
+        return abort(404)
+    problem = Problem.query.filter(Problem.id == task_id).first()
+    if problem is None:
+        return 'Not found :('
+    if str(problem.id) != str(session['user_id']):
+        return 'Forbidden!!'
+    problem.deleted = True
+    db.session.commit()
+    return redirect('/')
 
 
 @app.errorhandler(404)

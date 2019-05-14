@@ -1,0 +1,25 @@
+<table class="table table-striped">
+<thead>
+  <tr>
+    <th scope="col">id</th>
+    <th scope="col">Название</th>
+    <th scope="col">Дата выполнения</th>
+    <th scope="col">Исполнитель</th>
+    <th scope="col">Текуший этап</th>
+    <th scope="col">Признак выполнености</th>
+    <th scope="col">Приоритет</th>
+    <th scope="col"><center>Действия</center></th>
+  </tr>
+</thead>
+<tbody>
+    <th scope="row">{{ problem.id }}</th>
+    <td>{{ problem.name }}</td>
+    <td>{{ problem.time_end }}</td>
+    <td>{{ problem.author_id }}</td>
+    <td>{{ problem.completion_stage }}</td>
+    <td>{{ problem.status }}</td>
+    <td>{{ problem.priority }}</td>
+    <td><a href="/edit-task/{{ problem.id }}">Редактировать</a></td>
+    <td><a href="/del-task/{{ problem.id }}">Удалить</a></td>
+</tbody>
+</table>

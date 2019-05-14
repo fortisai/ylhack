@@ -1,4 +1,5 @@
 from database import *
+from flask import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
@@ -81,45 +82,48 @@ def registration():
         return render_template('registration.html', title=': Регистрация', fixed_footer=True, error=error)
 
 
-@app.route('/add-task')
+@app.route('/add-task', methods=['GET', 'POST'])
 def add_task():
     if 'user_id' not in session:
         return redirect('/')
     if request.method == "GET":
-        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"), author_id=session['user_id'])
+        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"), author_id=session['user_id'], completion_stage=0)
         session['problem_id'] = problem.id
         return render_template('edit_task.html', title='Добавление задачи', problem=problem)
     elif request.method == "POST":
         name = request.form["name"]
-        end_time = request.form["end_time"]
+        end_time = request.form["time_end"]
         description = request.form["description"]
-        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'])
+        completion = request.form["completion_stage"]
+        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'], completion_stage=completion)
         User.query.filter(User.id == session['problem_id']).delete()
         db.session.add(user)
         session['problem_id'] = user.id
         db.session.commit()
-        return render_template('edit_task.html')
+        return redirect(f'/edit-task/{user.id}')
 
 
-@app.route('/edit-task/<int:task_id>')
-def add_task(task_id):
+@app.route('/edit-task/<int:task_id>', methods=['GET', 'POST'])
+def edit_task(task_id):
     if 'user_id' not in session:
-        return redirect('/')
+        return abort(404)
     if request.method == "GET":
-        problem = Problem(id=task_id)
-        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"), author_id=session['user_id'])
+        problem = Problem.query.filter(Problem.id == task_id).first()
+        if problem is None:
+            return 'Not found :('
         session['problem_id'] = problem.id
         return render_template('edit_task.html', title='Добавление задачи', problem=problem)
     elif request.method == "POST":
         name = request.form["name"]
-        end_time = request.form["end_time"]
+        end_time = request.form["time_end"]
         description = request.form["description"]
-        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'])
+        completion = request.form["completion_stage"]
+        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'], completion_stage=completion)
         User.query.filter(User.id == session['problem_id']).delete()
         db.session.add(user)
         session['problem_id'] = user.id
         db.session.commit()
-        return render_template('edit_task.html')
+        return render_template('edit_task.html', problem=user)
 
 
 @app.errorhandler(404)

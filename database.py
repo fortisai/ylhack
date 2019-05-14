@@ -24,6 +24,7 @@ class User(db.Model):
 
 class Problem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(500), unique=False, nullable=False)
     statement = db.Column(db.String(5000), unique=False, nullable=False)
     time_end = db.Column(db.String(50), unique=False, nullable=False)
     author_id = db.Column(db.Integer, unique=False, nullable=False)

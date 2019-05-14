@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block content %}
 <main class="container pt-5">
     <br><br><br>
 <div class="card mx-xl-5">
@@ -22,7 +23,11 @@
                     <textarea  name="description" type="text" id="form7" class="form-control md-textarea" rows="3">{{problem.statement}}</textarea>
                     <label for="form7" class="">Описание</label>
                 </div>
-                
+
+
+                <label for="defaultFormCardNameEx" class="grey-text font-weight-light">Выполненность</label>
+                <input type="text" id="defaultFormCardNameEx" class="form-control" name="completion_stage" value="{{ problem.completion_stage }}">
+
     
                 <div class="text-center py-4 mt-3">
                     <button class="btn btn-outline-purple" type="submit">Добавить<i class="fa fa-paper-plane-o ml-2"></i></button>

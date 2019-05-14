@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="mt-5 pt-4 mr-auto ml-auto">
+    <div class="mb-4 mt-5 container">
+        <form action="" method="post">
+            <section class="form-simple" style="width: 480px; ">
+
+                <!--Form with header-->
+                <div class="card">
+
+                    <!--Header-->
+                    <div class="header pt-3 grey lighten-2">
+
+                        <div class="row d-flex justify-content-start">
+                            <h3 class="deep-grey-text mt-3 mb-4 pb-1 mx-5">Редактирование задачи</h3>
+                        </div>
+
+                    </div>
+                    <!--Header-->
+
+                    <div class="card-body mx-4 mt-4">
+
+                        <!--Body-->
+                        <div class="md-form">
+                            <input type="text" id="Form-email4" class="form-control" name="login" value="{{name}}">
+                            <label for="Form-email4">Название</label>
+                        </div>
+
+                        <div class="md-form">
+                            <textarea value="{{descript}}" name="description" id="form7" class="form-control md-textarea" rows="3"></textarea>
+                            <label for="form7" class="">Описание задачи</label>
+                        </div>
+
+                        <form>
+                          Дата начала:
+                          <input type="date" name="start_time">
+                        </form>
+
+                        <div class="text-center mb-4">
+                            <button type="button submit" class="btn btn-danger btn-block z-depth-2 waves-effect waves-light">Сохранить</button>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!--/Form with header-->
+
+            </section>
+        </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

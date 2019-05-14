@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+<main class="container pt-5">
+    <br><br><br>
+<div class="card mx-xl-5">
+
+        <div class="card-body">
+    
+            <form method="POST">
+                <p class="h4 text-center py-4">Создание задачи</p>
+    
+                <label for="defaultFormCardNameEx" class="grey-text font-weight-light">Название</label>
+                <input type="text" id="defaultFormCardNameEx" class="form-control" name="name_problem">
+    
+                <br>
+                
+                <label for="defaultFormCardEmailEx" class="grey-text font-weight-light">Дата выполнения</label>
+                <input type="text" id="defaultFormCardEmailEx" class="form-control" name="date">
+
+                <br>
+
+                <div class="md-form">
+                        <textarea name="description" type="text" id="form7" class="form-control md-textarea" rows="3"></textarea>
+                        <label for="form7" class="">Описание</label>
+                    </div>
+                
+    
+                <div class="text-center py-4 mt-3">
+                    <button class="btn btn-outline-purple" type="submit">Добавить<i class="fa fa-paper-plane-o ml-2"></i></button>
+                </div>
+            </form>
+    
+        </div>
+    
+    </div>
+    <br><br>
+</main>
+{% endblock %}

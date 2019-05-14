@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>MS {{ title }}</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for("static", filename="css/bootstrap.min.css") }}" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="{{ url_for("static", filename="css/mdb.min.css") }}" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="{{ url_for("static", filename="css/style.css") }}" rel="stylesheet">
+  <link rel="shortcut icon" href="{{ url_for("static", filename="favicon.ico") }}">
+  <style>
+    html,
+    body, 
+    header,
+    .carousel {
+      height: 60vh;
+    }
+    @media (max-width: 740px) {
+      html,
+      body, 
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+    @media (min-width: 800px) and (max-width: 850px) {
+      html,
+      body, 
+      header,
+      .carousel {
+        height: 100vh;
+    }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- start navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-light yellow scrolling-navbar">
+    <div class="container">
+      <a href="/" class="navbar-brand waves-effect" >
+        <h1>MyStartup 
+            <sup>
+                <span class="badge red z-depth-1 mr-1">-alpha</span>
+            </sup>
+        </h1>
+      </a>
+      <button class="navbar-toggler" type="button"
+      data-toggle="collapse" data-target="#navbarContent"
+      aria-controls="navbarContent" aria-expanded="false" 
+      aria-label="Toggle navigation"> 
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav mr-auto">
+          <!--li class="nav-item">
+            <a href="#" class="nav-link waves-effect">Главная страница</a>
+          </li>
+          <li class="nav-item">
+              <a href="#" class="nav-link waves-effect">ТОП</a>
+          </li>
+          <li class="nav-item">
+              <a href="#" class="nav-link waves-effect">О нас</a>
+          </li-->
+        </ul>
+
+        <ul class="navbar-nav nav-flex-icons">
+          <li class="nav-item">
+            {% if "username" in session %}
+              
+              <div>
+                <a href="/logout" class="nav-link waves-effect">
+                  <i class="fas fa-user-circle fa-2x"><strong> {{session['username']}}</strong></i>
+                </a>
+              </div>
+            {% else %}
+              <a href="/login" class="nav-link waves-effect">
+                <strong>Вход</strong>
+              </a>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- end navbar -->
+
+    {% block carousel %}{% endblock %}
+
+    {% block content %}{% endblock %}
+
+    {% if not footer %}
+      {% if fixed_footer %}
+          <footer class="page-footer black text-center font-small wow fadeIn  fixed-bottom">
+        {% else %}
+          <footer class="page-footer black text-center font-small wow fadeIn">
+      {% endif %}
+              <div class="pt-4">
+                  <h5>MyGit <i class="fa fa-heart"></i> for you</h5>
+              </div>
+
+          </footer>
+    {% endif %}
+
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="{{ url_for("static", filename="js/jquery-3.3.1.min.js") }}"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="{{ url_for("static", filename="js/popper.min.js") }}"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="{{ url_for("static", filename="js/bootstrap.min.js") }}"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="{{ url_for("static", filename="js/mdb.js") }}"></script>
+  <script>
+      new WOW().init();
+  </script>
+</body>
+
+</html>

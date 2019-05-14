@@ -9,19 +9,19 @@
                 <p class="h4 text-center py-4">Создание задачи</p>
     
                 <label for="defaultFormCardNameEx" class="grey-text font-weight-light">Название</label>
-                <input type="text" id="defaultFormCardNameEx" class="form-control" name="name_problem" value="{{ problem.name }}">
+                <input type="text" id="defaultFormCardNameEx" class="form-control" name="name" value="{{ problem.name }}">
     
                 <br>
                 
                 <label for="defaultFormCardEmailEx" class="grey-text font-weight-light">Дата выполнения</label>
-                <input type="text" id="defaultFormCardEmailEx" class="form-control" name="date" value="{{ problem.time_end }}>
+                <input type="text" id="defaultFormCardEmailEx" class="form-control" name="time_end" value="{{ problem.time_end }}">
 
                 <br>
 
                 <div class="md-form">
-                        <textarea  name="description" type="text" id="form7" class="form-control md-textarea" rows="3">{{problem.statement}}</textarea>
-                        <label for="form7" class="">Описание</label>
-                    </div>
+                    <textarea  name="description" type="text" id="form7" class="form-control md-textarea" rows="3">{{problem.statement}}</textarea>
+                    <label for="form7" class="">Описание</label>
+                </div>
                 
     
                 <div class="text-center py-4 mt-3">

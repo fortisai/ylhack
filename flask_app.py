@@ -1,5 +1,6 @@
 from database import *
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 # Main page
 
@@ -81,31 +82,44 @@ def registration():
 
 
 @app.route('/add-task')
-def add_task:
+def add_task():
+    if 'user_id' not in session:
+        return redirect('/')
     if request.method == "GET":
-        return render_template('task.html', title=': Регистрация', fixed_footer=True)
+        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"), author_id=session['user_id'])
+        session['problem_id'] = problem.id
+        return render_template('edit_task.html', title='Добавление задачи', problem=problem)
     elif request.method == "POST":
-        login = request.form["login"]
-        password = request.form["u_password"]
-        password_conf = request.form["u_password_once_again"]
-        email = request.form["email"]
-        if not (login and password):
-            error = "Одно из полей не заполнено"
-        elif password != password_conf:
-            error = 'Пароли не совпадают'
-        elif User.query.filter(User.login == login).first():
-            error = "Пользователь с таким именем уже зарегистрирован в системе. Исправьте данные"
-        elif User.query.filter(User.email == email).first():
-            error = "Пользователь с таким e-mail уже зарегистрирован в системе. Исправьте данные"
-        else:
-            if not request.form["email"]:
-                email = ''
-            password = generate_password_hash(password)
-            user = User(password=password, login=login, email=email, admin=0)
-            db.session.add(user)
-            db.session.commit()
-            return render_template('registration_success.html')
-        return render_template('registration.html', title=': Регистрация', fixed_footer=True, error=error)
+        name = request.form["name"]
+        end_time = request.form["end_time"]
+        description = request.form["description"]
+        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'])
+        User.query.filter(User.id == session['problem_id']).delete()
+        db.session.add(user)
+        session['problem_id'] = user.id
+        db.session.commit()
+        return render_template('edit_task.html')
+
+
+@app.route('/edit-task/<int:task_id>')
+def add_task(task_id):
+    if 'user_id' not in session:
+        return redirect('/')
+    if request.method == "GET":
+        problem = Problem(id=task_id)
+        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"), author_id=session['user_id'])
+        session['problem_id'] = problem.id
+        return render_template('edit_task.html', title='Добавление задачи', problem=problem)
+    elif request.method == "POST":
+        name = request.form["name"]
+        end_time = request.form["end_time"]
+        description = request.form["description"]
+        user = Problem(name=name, statement=description, time_end=end_time, author_id=session['user_id'])
+        User.query.filter(User.id == session['problem_id']).delete()
+        db.session.add(user)
+        session['problem_id'] = user.id
+        db.session.commit()
+        return render_template('edit_task.html')
 
 
 @app.errorhandler(404)

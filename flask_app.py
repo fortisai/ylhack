@@ -2,7 +2,7 @@ from database import *
 from flask import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from telegram_ import get_valid, send_code
+# from telegram_ import get_valid, send_code
 from rest import *
 
 # Main page
@@ -133,7 +133,7 @@ def add_task():
     if request.method == "GET":
         users = User.query.all()
         print(len(users))
-        problem = Problem(name='Новая задача', statement='', time_end=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"),
+        problem = Problem(name='Новая задача', statement='', time_end=(datetime.now() + datetime.timedelta(days=1)).strftime("%d/%m/%Y %H:%M:%S"),
                           author_id=session['user_id'], completion_stage=0)
         session['problem_id'] = problem.id
         return render_template('edit_task.html', title='Добавление задачи', problem=problem, users=users)
@@ -221,6 +221,51 @@ api.add_resource(Task, '/api/task/<int:task_id>')
 api.add_resource(Tasks,'/api/task')
 api.add_resource(Auth, '/api/auth')
 
+from flask import Flask, request
+import logging
+import json
+import random
+from requests import post
+
+app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO)
+
+
+@app.route('/alice', methods=['POST'])
+def alice():
+    logging.info('Request: %r', request.json)
+    response = {
+        'session': request.json['session'],
+        'version': request.json['version'],
+        'response': {
+            'end_session': False
+        }
+    }
+    handle_dialog(response, request.json)
+    logging.info('Response: %r', response)
+    return json.dumps(response)
+
+
+def handle_dialog(res, req):
+    if req['session']['new']:
+        res['response']['text'] = 'Привет! Введи <login> <password>'
+        return
+    args = req["original_utterance"].strip()
+    login, passw = args
+    print(login, passw)
+    response = post('http://localhost:5000/api/auth',
+                    data={"login": login, "password": passw}).json()
+    print(response)
+    if response["token"]:
+        res["text"] = "Успешно"
+    else:
+        res["text"] = response["error"]
+    return
+
+
+if __name__ == '__main__':
+    app.run()
 
 if __name__ == '__main__':
     app.run('127.0.0.1', port=5000, debug=True)

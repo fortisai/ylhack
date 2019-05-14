@@ -22,7 +22,6 @@ class Auth(Resource):
         if not user:
             return jsonify({"error": "no such user"})
         if not check_password_hash(user.password, password):
-        #if not user.password == password:
             return jsonify({"error": "wrong pass"})
         token = generate_password_hash(login + password)
         tokens[token] = login

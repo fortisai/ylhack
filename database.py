@@ -10,12 +10,6 @@ db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
-class News(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), unique=True, nullable=False)
-    content = db.Column(db.String(5000), unique=False, nullable=False)
-
-
 # Здесь будут храниться логины и пароли пользователей.
 
 class User(db.Model):

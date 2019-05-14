@@ -1,14 +1,15 @@
-from flask import Flask, url_for, request, render_template, redirect, flash
-import json
 from database import *
 from werkzeug.security import generate_password_hash, check_password_hash
-import time
+
+# Main page
 
 
 @app.route('/')
 @app.route('/index')
 def main():
     return render_template('base.html', fixed_footer=True)
+
+# User logout
 
 
 @app.route('/logout')
@@ -17,6 +18,8 @@ def logout():
     session.pop('user_id', 0)
     session.pop('admin', 0)
     return redirect('/')
+
+# User login
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -42,6 +45,8 @@ def login():
             return redirect('/')
         return render_template('login.html', title=': Вход', fixed_footer=True, error=error)
 
+# User registration
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -54,7 +59,7 @@ def registration():
         email = request.form["email"]
         if not (login and password):
             error = "Одно из полей не заполнено"
-        if password != password_conf:
+        elif password != password_conf:
             error = 'Пароли не совпадают'
         elif User.query.filter(User.login == login).first():
             error = "Пользователь с таким именем уже зарегистрирован в системе. Исправьте данные"

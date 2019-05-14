@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="mt-5 pt-4 mr-auto ml-auto">
+    <div class="mb-4 mt-5 container">
+        <form action="" method="post">
+            <section class="form-simple" style="width: 480px; ">
+
+                <!--Form with header-->
+                <div class="card">
+
+                    <!--Header-->
+                    <div class="header pt-3 grey lighten-2">
+
+                        <div class="row d-flex justify-content-start">
+                            <h3 class="deep-grey-text mt-3 mb-4 pb-1 mx-5">Вход</h3>
+                        </div>
+
+                    </div>
+                    <!--Header-->
+
+                    <div class="card-body mx-4 mt-4">
+
+                        <!--Body-->
+                        <div class="md-form">
+                            <input type="text" id="Form-email4" class="form-control" name="login">
+                            <label for="Form-email4">Логин или e-mail</label>
+                        </div>
+
+                        <div class="md-form pb-3">
+                            <input type="password" id="Form-pass4" class="form-control" name='u_password'>
+                            <label for="Form-pass4">Пароль</label>
+                            <p class="font-small red-text d-flex justify-content-end">{{ error }}</p>
+                        </div>
+
+                        <div class="text-center mb-4">
+                            <button type="button submit" class="btn btn-danger btn-block z-depth-2 waves-effect waves-light">Вход</button>
+                        </div>
+                        <p class="font-small grey-text d-flex justify-content-center">Нет аккаунта?
+                            <a href="/registration" class="dark-grey-text font-weight-bold ml-1"> Регистрация</a>
+                        </p>
+
+                    </div>
+
+                </div>
+                <!--/Form with header-->
+
+            </section>
+        </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

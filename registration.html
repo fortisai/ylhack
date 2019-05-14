@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="mt-5 pt-4 mr-auto ml-auto">
+    <div class="mb-4 mt-5 container">
+        <form action="" method="post">
+            <section class="form-simple" style="width: 480px; ">
+
+                <!--Form with header-->
+                <div class="card">
+
+                    <!--Header-->
+                    <div class="header pt-3 grey lighten-2">
+
+                        <div class="row d-flex justify-content-start">
+                            <h3 class="deep-grey-text mt-3 mb-4 pb-1 mx-5">Регистрация</h3>
+                        </div>
+
+                    </div>
+                    <!--Header-->
+
+                    <div class="card-body mx-4 mt-4">
+
+                        <!--Body-->
+                        <div class="md-form">
+                            <input type="text" id="Form-email4" class="form-control" name="login">
+                            <label for="Form-email4">Логин</label>
+                        </div>
+
+                        <div class="md-form">
+                            <input type="text" id="Form-email4" class="form-control" name="email">
+                            <label for="Form-email4">Электронная почта</label>
+                        </div>
+
+                        <div class="md-form pb-3">
+                            <input type="password" id="Form-pass4" class="form-control" name="u_password">
+                            <label for="Form-pass4">Пароль</label>
+                        </div>
+
+                        <div class="md-form pb-3">
+                            <input type="password" id="Form-pass4" class="form-control" name="u_password_once_again">
+                            <label for="Form-pass4">Подтверждение пароля</label>
+                            <p class="font-small red-text d-flex justify-content-end">{{ error }}</p>
+                        </div>
+
+                        <div class="text-center mb-4">
+                            <button type="button submit" class="btn btn-danger btn-block z-depth-2 waves-effect waves-light">Регистрация</button>
+                        </div>
+                        <p class="font-small grey-text d-flex justify-content-center">Есть аккаунт?
+                            <a href="/login" class="dark-grey-text font-weight-bold ml-1"> Вход</a>
+                        </p>
+
+                    </div>
+
+                </div>
+                <!--/Form with header-->
+
+            </section>
+        </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
+

@@ -21,24 +21,26 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'user_id' in session:
+        return redirect('/')
     if request.method == "GET":
         return render_template('login.html', title=': Вход', fixed_footer=True)
     elif request.method == "POST":
         login = request.form["login"]
         password = request.form["u_password"]
         correct = User.query.filter(User.login == login).first()
-        if not correct:
-            error = ''
-        if not (login and password):
+        if correct is None:
+            error = 'Такого пользователя нет в системе'
+        elif not (login and password):
             error = "Одно из полей не заполнено"
         elif not check_password_hash(correct.password, password):
-            error = "Логин или пароль введены неверно"
+            error = "Неправильный пароль"
         else:
             session['username'] = correct.login
             session['user_id'] = correct.id
             session['admin'] = correct.admin
             return redirect('/')
-        return  render_template('login.html', title=': Вход', fixed_footer=True, error=error)
+        return render_template('login.html', title=': Вход', fixed_footer=True, error=error)
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -63,11 +65,7 @@ def registration():
             user = User(password=password, login=login, email=email, admin=0)
             db.session.add(user)
             db.session.commit()
-            correct = User.query.filter(User.login == login).first()
-            session['username'] = correct.login
-            session['user_id'] = correct.id
-            session['admin'] = correct.admin
-            return redirect('/')
+            return render_template('registration_success.html')
         return render_template('registration.html', title=': Регистрация', fixed_footer=True, error=error)
 
 

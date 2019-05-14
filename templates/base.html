@@ -78,7 +78,7 @@
             {% if "username" in session %}
               
               <div>
-                <a href="/logout" class="nav-link waves-effect">
+                <a href="/user/id{{ session['user_id'] }}" class="nav-link waves-effect">
                   <i class="fas fa-user-circle fa-2x"><strong> {{session['username']}}</strong></i>
                 </a>
               </div>
@@ -101,14 +101,25 @@
 
     {% if not footer %}
       {% if fixed_footer %}
-          <footer class="page-footer black text-center font-small wow fadeIn  fixed-bottom">
+          <footer class="page-footer text-center font-small black wow fadeIn fixed-bottom">
         {% else %}
-          <footer class="page-footer black text-center font-small wow fadeIn">
+          <footer class="page-footer text-center font-small black wow fadeIn">
       {% endif %}
               <div class="pt-4">
-                  <h5>MyGit <i class="fa fa-heart"></i> for you</h5>
+                  <h5>MyStartup <i class="fa fa-heart"></i> for you</h5>
               </div>
 
+              <hr class="my-4">
+
+              <div class="pb-4">
+              <a href="https://github.com/Istox13/YS">GITHUB
+                  <i class="fab fa-github"></i>
+              </a>
+
+              <a href="https://vk.com/id432809419" class="ml-5">VK.COM
+                  <i class="fab fa-vk"></i>
+              </a>
+              </div>
           </footer>
     {% endif %}
 
